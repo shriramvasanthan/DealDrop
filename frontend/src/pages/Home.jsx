@@ -47,6 +47,7 @@ const Home = () => {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('grid');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 150]);
@@ -74,6 +75,15 @@ const Home = () => {
     const t = new Date(d.expiryTime) - new Date();
     return t > 0 && t < 1000 * 60 * 30;
   });
+
+  const filteredDeals = selectedCategory === 'All'
+    ? deals
+    : deals.filter(d => d.category === selectedCategory);
+
+  const handleCategorySelect = (cat) => {
+    setSelectedCategory(cat);
+    document.getElementById('deals-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <div className="w-full relative">
@@ -184,7 +194,12 @@ const Home = () => {
         >
           <div>
             <h2 className="text-4xl font-bold neon-text-blue mb-3">Trending Nearby</h2>
-            <p className="text-slate-400 text-lg">Offers vanishing quickly near Chennai</p>
+            <p className="text-slate-400 text-lg">
+              {selectedCategory === 'All' ? 'Offers vanishing quickly near Chennai' : `Showing: ${selectedCategory}`}
+              {selectedCategory !== 'All' && (
+                <button onClick={() => setSelectedCategory('All')} className="ml-3 text-sm text-neon-purple hover:text-white underline">Clear filter</button>
+              )}
+            </p>
           </div>
           
           <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md p-1.5 rounded-xl border border-slate-700 shadow-xl">
@@ -213,7 +228,7 @@ const Home = () => {
           </div>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {deals.map((deal, index) => (
+            {filteredDeals.length > 0 ? filteredDeals.map((deal, index) => (
               <motion.div
                 key={deal._id}
                 initial={{ opacity: 0, y: 20 }}
@@ -224,7 +239,12 @@ const Home = () => {
               >
                 <DealCard deal={deal} />
               </motion.div>
-            ))}
+            )) : (
+              <div className="col-span-full text-center py-20 text-slate-400">
+                <p className="text-2xl mb-2">😔 No deals in <span className="text-neon-purple">{selectedCategory}</span></p>
+                <button onClick={() => setSelectedCategory('All')} className="text-neon-blue hover:text-white transition-colors mt-2">Show all deals</button>
+              </div>
+            )}
           </div>
         ) : (
           <motion.div 
@@ -284,8 +304,22 @@ const Home = () => {
         <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
           <h2 className="text-4xl font-bold mb-8">Browse by <span className="neon-text-purple">Category</span></h2>
           <div className="flex flex-wrap gap-3">
-            {['Electronics', 'Fashion', 'Food & Drink', 'Beauty', 'Ethnic Wear', 'Furniture', 'Apparel', 'Sports'].map((cat, i) => (
-              <motion.button key={cat} initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} whileHover={{ scale: 1.07 }} className="glass px-5 py-2.5 rounded-full text-sm font-bold hover:border-neon-blue hover:text-neon-blue transition-all border-slate-600">
+            {['All', 'Electronics', 'Fashion', 'Food & Drink', 'Beauty', 'Ethnic Wear', 'Furniture', 'Apparel', 'Sports'].map((cat, i) => (
+              <motion.button
+                key={cat}
+                onClick={() => handleCategorySelect(cat)}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                whileHover={{ scale: 1.07 }}
+                whileTap={{ scale: 0.95 }}
+                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${
+                  selectedCategory === cat
+                    ? 'bg-neon-purple/20 border-neon-purple text-neon-purple shadow-[0_0_12px_rgba(188,19,254,0.4)]'
+                    : 'glass border-slate-600 hover:border-neon-blue hover:text-neon-blue'
+                }`}
+              >
                 {cat}
               </motion.button>
             ))}
