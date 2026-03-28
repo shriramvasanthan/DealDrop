@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Auth from './pages/Auth';
 import DealDetail from './pages/DealDetail';
 import RetailerDashboard from './pages/RetailerDashboard';
+import Requests from './pages/Requests';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/deal/:id" element={<DealDetail />} />
+            <Route path="/requests" element={<Requests />} />
             <Route path="/retailer" element={
               <ProtectedRoute role="retailer">
                 <RetailerDashboard />

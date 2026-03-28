@@ -20,11 +20,14 @@ const Navbar = () => {
       </Link>
       
       <div className="flex items-center gap-4">
+        <Link to="/requests" className="text-sm font-medium text-slate-400 hover:text-neon-blue transition-colors hidden sm:block">
+          🔁 Requests
+        </Link>
         {user ? (
           <>
             {user.role === 'retailer' && (
               <Link to="/retailer" className="text-sm font-medium hover:text-neon-purple transition-colors">
-                Retailer Dashboard
+                Dashboard
               </Link>
             )}
             <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">

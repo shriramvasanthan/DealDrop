@@ -4,6 +4,8 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import dealRoutes from './routes/dealRoutes.js';
+import requestRoutes from './routes/requestRoutes.js';
+import { startCronJobs } from './services/cronService.js';
 
 dotenv.config();
 
@@ -22,6 +24,10 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/deals', dealRoutes);
+app.use('/api/requests', requestRoutes);
+
+// Start background services
+startCronJobs();
 
 const PORT = process.env.PORT || 5001;
 
